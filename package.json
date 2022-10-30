@@ -1,0 +1,34 @@
+{
+  "name": "graphql-api-analysis",
+  "version": "1.0.0",
+  "description": "GraphQL API",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exec babel-node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nehalbhanushali/GraphQL-API-analysis.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nehalbhanushali/GraphQL-API-analysis/issues"
+  },
+  "homepage": "https://github.com/nehalbhanushali/GraphQL-API-analysis#readme",
+  "devDependencies": {
+    "@babel/core": "^7.19.6",
+    "@babel/node": "^7.20.0",
+    "@babel/preset-env": "^7.19.4",
+    "nodemon": "^2.0.19"
+  },
+  "dependencies": {
+    "apollo-server": "^3.10.3",
+    "apollo-server-express": "^3.10.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "graphql": "^16.6.0"
+  }
+}
