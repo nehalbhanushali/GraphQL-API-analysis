@@ -10,11 +10,20 @@ const schema = gql`
     users: [User!]
     user(id: ID!): User
     me: User
+    groups: [Group!]!
+    group(id: ID!): Group!
   }
 
   type User {
     id: ID!
     username: String!
+    groups: [Group!]
+  }
+
+  type Group {
+    id: ID!
+    displayname: String!
+    users: [User!]
   }
 `;
 
@@ -22,16 +31,32 @@ let users = {
   1: {
     id: "1",
     username: "Nehal Bhanushali",
+    groupIds: ["1", "3"],
   },
   2: {
     id: "2",
     username: "Rydham Bhanushali",
+    groupIds: ["2"],
   },
 };
 
-const me = users[1];
-
-console.log("NEHAL ", me);
+let groups = {
+  1: {
+    id: "1",
+    displayname: "Admins",
+    userIds: ["1"],
+  },
+  2: {
+    id: "2",
+    displayname: "Special",
+    userIds: ["2"],
+  },
+  3: {
+    id: "3",
+    displayname: "Ops",
+    userIds: ["1"],
+  },
+};
 
 const resolvers = {
   Query: {
@@ -41,8 +66,28 @@ const resolvers = {
     user: (parent, { id }) => {
       return users[id];
     },
-    me: () => {
+    me: (parent, args, { me }) => {
       return me;
+    },
+    groups: () => {
+      return Object.values(groups);
+    },
+    group: (parent, { id }) => {
+      return groups[id];
+    },
+  },
+  User: {
+    groups: (user) => {
+      return Object.values(groups).filter((group) =>
+        user.groupIds.includes(group.id)
+      );
+    },
+  },
+  Group: {
+    users: (group) => {
+      return Object.values(users).filter((user) =>
+        group.userIds.includes(user.id)
+      );
     },
   },
 };
@@ -50,6 +95,9 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
+  context: {
+    me: users[1],
+  },
 });
 
 const app = express();
@@ -62,7 +110,5 @@ server.start().then((res) => {
     console.log(`🚀 Server ready at http://localhost:3000${server.graphqlPath}`)
   );
 });
-
-console.log("Hello ever running Node.js project 1 with Express.");
 
 // console.log(process.env.MY_SECRET);
