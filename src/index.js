@@ -1,6 +1,7 @@
 import "dotenv/config"; // NOTE: This should be on top, to use .env in all consequent files imported
 import cors from "cors";
 import express from "express";
+import { v4 as uuidv4 } from "uuid";
 import { ApolloServer, gql } from "apollo-server-express";
 
 const port = process.env.PORT;
@@ -12,6 +13,11 @@ const schema = gql`
     me: User
     groups: [Group!]!
     group(id: ID!): Group!
+  }
+
+  type Mutation {
+    createGroup(displayname: String!): Group!
+    deleteGroup(id: ID!): Boolean!
   }
 
   type User {
@@ -76,6 +82,29 @@ const resolvers = {
       return groups[id];
     },
   },
+  Mutation: {
+    createGroup: (parent, { displayname }, { me }) => {
+      const id = uuidv4();
+      const group = {
+        id,
+        displayname,
+      };
+      groups[id] = group;
+      return group;
+    },
+    deleteGroup: (parent, { id }) => {
+      const { [id]: group, ...otherGroups } = groups;
+
+      if (!group) {
+        return false;
+      }
+
+      groups = otherGroups;
+
+      return true;
+    },
+  },
+
   User: {
     groups: (user) => {
       return Object.values(groups).filter((group) =>
