@@ -3,6 +3,9 @@ import cors from "cors";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 
+// Making GraphQL secure
+import depthLimit from "graphql-depth-limit";
+
 import schema from "./schema";
 import resolvers from "./resolvers";
 import models from "./models";
@@ -11,6 +14,7 @@ const port = process.env.PORT;
 
 const server = new ApolloServer({
   typeDefs: schema,
+  validationRules: [depthLimit(1)],
   resolvers,
   context: {
     models,
