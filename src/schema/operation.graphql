@@ -1,0 +1,10 @@
+query Operation {
+  users {
+    id
+    username
+    groups {
+      id
+      displayname
+    }
+  }
+}

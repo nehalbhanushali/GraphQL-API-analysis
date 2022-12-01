@@ -2,7 +2,9 @@ import { v4 as uuidv4 } from "uuid";
 
 const resolvers = {
   Query: {
-    groups: (parent, args, { models }) => {
+    groups: async (parent, args, { models }) => {
+      // TODO: undo timeout post sequalize
+      // await new Promise((res) => setTimeout(res, Math.random() * 1000));
       return Object.values(models.groups);
     },
     group: (parent, { id }, { models }) => {

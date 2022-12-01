@@ -1,6 +1,8 @@
 const resolvers = {
   Query: {
     users: (parent, args, { models }) => {
+      // TODO: Need some delay for request profiler data. Undo timeout post sequalize
+      // await new Promise((res) => setTimeout(res, Math.random() * 1000));
       return Object.values(models.users);
     },
     user: (parent, { id }, { models }) => {

@@ -3,8 +3,8 @@ import cors from "cors";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 
-// Making GraphQL secure
-import depthLimit from "graphql-depth-limit";
+import { createApolloProfilerPlugin } from "@econify/graphql-request-profiler"; // Request profiling
+import depthLimit from "graphql-depth-limit"; // Making GraphQL secure
 
 import schema from "./schema";
 import resolvers from "./resolvers";
@@ -14,12 +14,13 @@ const port = process.env.PORT;
 
 const server = new ApolloServer({
   typeDefs: schema,
-  validationRules: [depthLimit(1)],
+  validationRules: [depthLimit(3)],
   resolvers,
   context: {
     models,
     me: models.users[1],
   },
+  plugins: [createApolloProfilerPlugin()],
 });
 
 const app = express();
