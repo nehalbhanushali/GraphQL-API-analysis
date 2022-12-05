@@ -1,20 +1,37 @@
+import { combineResolvers } from "graphql-resolvers";
+
 const resolvers = {
   Query: {
-    users: (parent, args, { models }) => {
-      // TODO: Need some delay for request profiler data. Undo timeout post sequalize
-      // await new Promise((res) => setTimeout(res, Math.random() * 1000));
-      return Object.values(models.users);
+    users: async (parent, args, { models }) => {
+      return await models.User.findAll();
     },
-    user: (parent, { id }, { models }) => {
-      return models.users[id];
+    user: async (parent, { id }, { models }) => {
+      return await models.User.findByPk(id);
     },
     me: (parent, args, { me }) => {
       return me;
     },
   },
+
+  Mutation: {
+    updateUser: combineResolvers(
+      async (parent, { id, username }, { models }) => {
+        const user = await models.User.findByPk(id);
+        return await user.update({ username });
+      }
+    ),
+
+    deleteUser: combineResolvers(async (parent, { id }, { models }) => {
+      return await models.User.destroy({
+        where: { id },
+      });
+    }),
+  },
+
   User: {
     groups: (user, args, { models }) => {
-      return Object.values(models.groups).filter((group) =>
+      // TODO: sequalize
+      return Object.values(models.Group.findAll()).filter((group) =>
         user.groupIds.includes(group.id)
       );
     },

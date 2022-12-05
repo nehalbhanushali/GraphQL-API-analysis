@@ -24,4 +24,19 @@ npm run-script postbuild
 
 ### PostgreSQL
 
-TODO
+$ postgres --version
+postgres (PostgreSQL) 14.6 (Homebrew)
+
+$ initdb /usr/local/var/postgres
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /usr/local/var/postgres -l logfile start
+
+createdb mydatabase # to create
+dropdb mydatabase # to delete
+psql mydatabase # connect to db using psql
+\list - List all of your actual databases.
+\c mydatabase - Connect to another database.
+\d - List the relations of your currently connected database.
+\d mytablename - Shows information for a specific table.

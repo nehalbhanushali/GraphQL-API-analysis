@@ -7,6 +7,11 @@ const schema = gql`
     me: User
   }
 
+  extend type Mutation {
+    updateUser(id: ID!, username: String!): User!
+    deleteUser(id: ID!): Boolean!
+  }
+
   type User {
     id: ID!
     username: String!

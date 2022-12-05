@@ -1,41 +1,36 @@
 import { v4 as uuidv4 } from "uuid";
+import { combineResolvers } from "graphql-resolvers";
 
 const resolvers = {
   Query: {
     groups: async (parent, args, { models }) => {
-      // TODO: undo timeout post sequalize
-      // await new Promise((res) => setTimeout(res, Math.random() * 1000));
-      return Object.values(models.groups);
+      return await models.Group.findAll();
     },
-    group: (parent, { id }, { models }) => {
-      return models.groups[id];
+    group: async (parent, { id }, { models }) => {
+      return await models.Group.findByPk(id);
     },
   },
+
   Mutation: {
-    createGroup: (parent, { displayname }, { me, models }) => {
-      const id = uuidv4();
-      const group = {
-        id,
-        displayname,
-      };
-      models.groups[id] = group;
-      return group;
-    },
-    deleteGroup: (parent, { id }, { models }) => {
-      const { [id]: group, ...otherGroups } = models.groups;
+    createGroup: combineResolvers(
+      async (parent, { displayname }, { me, models }) => {
+        const group = await models.Group.create({
+          displayname,
+        });
 
-      if (!group) {
-        return false;
+        return group;
       }
+    ),
 
-      models.groups = otherGroups;
-
-      return true;
-    },
+    deleteGroup: combineResolvers(async (parent, { id }, { models }) => {
+      return await models.Group.destroy({ where: { id } });
+    }),
   },
+
   Group: {
     users: (group, args, { models }) => {
-      return Object.values(models.users).filter((user) =>
+      // TODO: sequalize
+      return Object.values(models.User.findAll()).filter((user) =>
         group.userIds.includes(user.id)
       );
     },

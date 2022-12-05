@@ -1,35 +1,28 @@
-let users = {
-  1: {
-    id: "1",
-    username: "Nehal Bhanushali",
-    groupIds: ["1", "3"],
-  },
-  2: {
-    id: "2",
-    username: "Rydham Bhanushali",
-    groupIds: ["2"],
-  },
+import Sequelize from "sequelize";
+
+import getUserModel from "./user";
+import getGroupModel from "./group";
+
+const sequelize = new Sequelize(
+  process.env.DATABASE,
+  process.env.DATABASE_USER,
+  process.env.DATABASE_PASSWORD,
+  {
+    dialect: "postgres",
+  }
+);
+
+const models = {
+  User: getUserModel(sequelize, Sequelize),
+  Group: getGroupModel(sequelize, Sequelize),
 };
 
-let groups = {
-  1: {
-    id: "1",
-    displayname: "Admins",
-    userIds: ["1"],
-  },
-  2: {
-    id: "2",
-    displayname: "Special",
-    userIds: ["2"],
-  },
-  3: {
-    id: "3",
-    displayname: "Ops",
-    userIds: ["1"],
-  },
-};
+Object.keys(models).forEach((key) => {
+  if ("associate" in models[key]) {
+    models[key].associate(models);
+  }
+});
 
-export default {
-  users,
-  groups,
-};
+export { sequelize };
+
+export default models;
